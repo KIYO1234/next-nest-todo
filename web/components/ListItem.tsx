@@ -3,6 +3,7 @@ import { Todos } from '../pages'
 
 export type Props = {
   todo: Todos
+  key: number
 }
 
 const ListItem = (props: Props) => {

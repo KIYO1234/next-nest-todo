@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import ListItem from '../components/ListItem'
 
 export type Todos = {
@@ -7,40 +7,41 @@ export type Todos = {
   title: string
 }
 
-const todos: Todos[] = [
-  { id: 1, title: 'プログラミングの勉強' },
-  { id: 2, title: '買い物' },
-  { id: 3, title: '映画鑑賞' },
-]
-
-const fetchAllTodos = () => {
-  fetch('http://localhost:3001/todos').then((res) => {
-    console.log('res⭐️', res)
-    console.log('res.body⭐️', res.body)
-  })
-}
-
-const getHello = () => {
-  fetch('http://localhost:3001').then((res) => {
-    console.log('res🐶', res)
-    console.log('res.body🐶', res.body)
-  })
-}
+// const todos: Todos[] = [
+//   { id: 1, title: 'プログラミングの勉強' },
+//   { id: 2, title: '買い物' },
+//   { id: 3, title: '映画鑑賞' },
+// ]
 
 export default function Home() {
+  const [todos, setTodos] = useState<Todos[]>([])
+  const fetchAllTodos = async () => {
+    console.log('fetchAllTodos')
+    const res: Todos[] = await fetch('http://localhost:3001/todos').then(
+      (res) => res.json()
+    )
+    // console.log('res', res)
+    setTodos(res)
+  }
+
+  // 第二引数を [] としないと、レンダリングごとに関数が別物と評価・実行され無限レンダリングが起こる
   useEffect(() => {
-    console.log('index.tsx rendered')
+    // console.log('index.tsx rendered⭐️')
     fetchAllTodos()
-    getHello()
-  })
+  }, [])
+
   return (
-    <>
-      <div className="text-center text-xl font-bold">Todo リスト</div>
-      <ul className="mt-10 text-center">
-        {todos.map((todo) => (
-          <ListItem key={todo.id} todo={todo} />
-        ))}
-      </ul>
-    </>
+    <div className="text-center">
+      <div className="text-xl font-bold">Todo リスト</div>
+      <input className="border-2 border-sky-500 mt-10" type="text" />
+      <button className="bg-sky-100 py-0.5 px-3 ml-4">追加</button>
+      {todos && (
+        <ul className="mt-10">
+          {todos.map((todo) => (
+            <ListItem key={todo.id} todo={todo} />
+          ))}
+        </ul>
+      )}
+    </div>
   )
 }

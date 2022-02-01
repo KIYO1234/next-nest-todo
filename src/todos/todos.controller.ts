@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 
 export type Todo = {
   id: number;
@@ -15,5 +15,14 @@ export class TodosController {
   @Get()
   findAll(): Todo[] {
     return todos;
+  }
+
+  @Post()
+  addOne(title: string) {
+    const todo = {
+      id: 3,
+      title,
+    };
+    todos.push(todo);
   }
 }
