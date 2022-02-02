@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 
 export type Todo = {
@@ -10,7 +18,7 @@ export type Title = {
   title: string;
 };
 
-const todos: Todo[] = [
+let todos: Todo[] = [
   // { id: uuid(), title: 'サンプルタスク１' },
   // { id: uuid(), title: 'サンプルタスク２' },
 ];
@@ -41,6 +49,7 @@ export class TodosController {
       title: body.title,
     };
     todos.push(todo);
+    return todo;
   }
 
   @Patch(':id')
@@ -53,5 +62,16 @@ export class TodosController {
     console.log('todo:', todo);
     todo[0].title = body.title;
     return todo[0];
+  }
+
+  @Delete(':id')
+  deleteOne(@Param('id') id: string) {
+    console.log('id⭐️', id);
+    console.log('todos🌟', todos);
+
+    const todo = todos.filter((todo) => todo.id !== id);
+    console.log('削除後のtodos: ', todo);
+    todos = todo;
+    return todos;
   }
 }

@@ -43,7 +43,7 @@ export default function Home() {
   }, [])
 
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('入力値：', event.target.value)
+    // console.log('入力値：', event.target.value)
     setKeyword(event.target.value)
   }
 
@@ -61,13 +61,34 @@ export default function Home() {
         // 'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: JSON.stringify(data),
+    }).then(async (res) => {
+      const result = await res.json()
+      console.log(result)
+      setTodos([...todos, result])
+      setKeyword('')
+      // setTodos([result])
     })
-      .then((res) => console.log(res))
-      .then((result) => console.log(result))
     // console.log('res❗️', res)
     // console.log('res.json()❗️', res.json())
 
     // setTodos(res.json())
+  }
+
+  const handleDelete = async (id: string) => {
+    if (confirm('本当に削除しますか？')) {
+      const res = await fetch(`http://localhost:3001/todos/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }).then(async (res) => {
+        const result = await res.json()
+        console.log('result✨', result)
+        setTodos(result)
+      })
+    } else {
+      alert('キャンセルされました')
+    }
   }
 
   return (
@@ -77,6 +98,7 @@ export default function Home() {
         onChange={handleInput}
         className="border-2 border-sky-500 mt-10"
         type="text"
+        value={keyword}
       />
       <button
         className="bg-sky-100 py-0.5 px-3 ml-4 hover:bg-sky-200"
@@ -87,7 +109,7 @@ export default function Home() {
       {todos && (
         <ul className="mt-10">
           {todos.map((todo) => (
-            <ListItem key={todo.id} todo={todo} />
+            <ListItem handleDelete={handleDelete} key={todo.id} todo={todo} />
           ))}
         </ul>
       )}
